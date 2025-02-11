@@ -97,15 +97,19 @@ You will not need to make use of any other std::thread API calls in this assignm
   generation work accordingly (threads should get blocks of the image). Note that the processor only has four cores but each
   core supports two hyper-threads, so it can execute a total of eight threads interleaved on its execution contents.
   In your write-up, produce a graph of __speedup compared to the reference sequential implementation__ as a function of the number of threads used __FOR VIEW 1__. Is speedup linear in the number of threads used? In your writeup hypothesize why this is (or is not) the case? (you may also wish to produce a graph for VIEW 2 to help you come up with a good answer. Hint: take a careful look at the three-thread datapoint.)
+
 ans: not linear.
+
 3.  To confirm (or disprove) your hypothesis, measure the amount of time
   each thread requires to complete its work by inserting timing code at
   the beginning and end of `workerThreadStart()`. How do your measurements
   explain the speedup graph you previously created?
+
 ans: middle thread takes more time.
 Thread 2: [85.411] ms
 Thread 0: [96.427] ms
 Thread 1: [339.322] ms
+
 4.  Modify the mapping of work to threads to achieve to improve speedup to
   at __about 7-8x on both views__ of the Mandelbrot set (if you're above 7x that's fine, don't sweat it). You may not use any
   synchronization between threads in your solution. We are expecting you to come up with a single work decomposition policy that will work well for all thread counts---hard coding a solution specific to each configuration is not allowed! (Hint: There is a very simple static
@@ -121,8 +125,10 @@ Thread 2: [145.627] ms
 Thread 1: [147.303] ms
 Thread 0: [161.898] ms
 6cores 12 threads,9.9倍加速
+
 5. Now run your improved code with 16 threads. Is performance noticably greater than when running with eight threads? Why or why not? 
-threads=24,几乎无加速 
+
+ans: threads=24,几乎无加速 
 
 ## Program 2: Vectorizing Code Using SIMD Intrinsics (20 points) ##
 
