@@ -16,38 +16,50 @@ typedef struct {
 
 
 extern void mandelbrotSerial(
-    float x0, float y0, float x1, float y1,
-    int width, int height,
-    int startRow, int numRows,
-    int maxIterations,
-    int output[]);
+        float x0, float y0, float x1, float y1,
+        int width, int height,
+        int startRow, int numRows,
+        int maxIterations,
+        int output[]);
 
 
 //
 // workerThreadStart --
 //
 // Thread entrypoint.
-void workerThreadStart(WorkerArgs * const args) {
+void workerThreadStartNaive(WorkerArgs * const args) {
 
-    // TODO FOR CS149 STUDENTS: Implement the body of the worker
-    // thread here. Each thread should make a call to mandelbrotSerial()
-    // to compute a part of the output image.  For example, in a
-    // program that uses two threads, thread 0 could compute the top
-    // half of the image and thread 1 could compute the bottom half.
-
-    printf("Hello world from thread %d\n", args->threadId);
+    double t_startTime = CycleTimer::currentSeconds();
+    if(args->threadId!=args->numThreads-1){
+        mandelbrotSerial(args->x0,args->y0,args->x1,args->y1,args->width,args->height,args->height/args->numThreads*args->threadId,args->height/args->numThreads,args->maxIterations,args->output);
+    }
+    else {
+        mandelbrotSerial(args->x0,args->y0,args->x1,args->y1,args->width,args->height,args->height/args->numThreads*args->threadId,args->height - args->height/args->numThreads*(args->numThreads-1),args->maxIterations,args->output);
+    }
+    double t_endTime = CycleTimer::currentSeconds();
+    printf("Thread %d: [%.3f] ms\n", args->threadId, (t_endTime - t_startTime) * 1000);
 }
 
+void workerThreadStart(WorkerArgs * const args) {
+    double t_startTime = CycleTimer::currentSeconds();
+    const unsigned int CHUNK_SIZE = 16;//may need test,16/32
+    for(unsigned int cur_row=args->threadId*CHUNK_SIZE;cur_row<args->height;cur_row+=args->numThreads*CHUNK_SIZE){
+        int numRow = std::min(CHUNK_SIZE,args->height-cur_row);
+        mandelbrotSerial(args->x0,args->y0,args->x1,args->y1,args->width,args->height,cur_row,numRow,args->maxIterations,args->output);
+    }
+    double t_endTime = CycleTimer::currentSeconds();
+    printf("Thread %d: [%.3f] ms\n", args->threadId, (t_endTime - t_startTime) * 1000);
+}
 //
 // MandelbrotThread --
 //
 // Multi-threaded implementation of mandelbrot set image generation.
 // Threads of execution are created by spawning std::threads.
 void mandelbrotThread(
-    int numThreads,
-    float x0, float y0, float x1, float y1,
-    int width, int height,
-    int maxIterations, int output[])
+        int numThreads,
+        float x0, float y0, float x1, float y1,
+        int width, int height,
+        int maxIterations, int output[])
 {
     static constexpr int MAX_THREADS = 32;
 
@@ -62,7 +74,7 @@ void mandelbrotThread(
     WorkerArgs args[MAX_THREADS];
 
     for (int i=0; i<numThreads; i++) {
-      
+
         // TODO FOR CS149 STUDENTS: You may or may not wish to modify
         // the per-thread arguments here.  The code below copies the
         // same arguments for each thread
@@ -75,7 +87,7 @@ void mandelbrotThread(
         args[i].maxIterations = maxIterations;
         args[i].numThreads = numThreads;
         args[i].output = output;
-      
+
         args[i].threadId = i;
     }
 
@@ -85,7 +97,7 @@ void mandelbrotThread(
     for (int i=1; i<numThreads; i++) {
         workers[i] = std::thread(workerThreadStart, &args[i]);
     }
-    
+
     workerThreadStart(&args[0]);
 
     // join worker threads
