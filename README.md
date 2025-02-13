@@ -395,11 +395,38 @@ Note: This problem is a review to double-check your understanding, as it covers 
   single CPU core (no tasks) and when using all cores (with tasks). What 
   is the speedup due to SIMD parallelization? What is the speedup due to 
   multi-core parallelization?
+
+```
+[sqrt serial]:          [585.045] ms
+[sqrt ispc]:            [113.408] ms
+[sqrt task ispc]:       [7.807] ms
+                                (5.16x speedup from ISPC)
+                                (74.94x speedup from task ISPC,14.5 speedup from multi core)
+```
+
+
 2.  Modify the contents of the array values to improve the relative speedup 
   of the ISPC implementations. Construct a specifc input that __maximizes speedup over the sequential version of the code__ and report the resulting speedup achieved (for both the with- and without-tasks ISPC implementations). Does your modification improve SIMD speedup?
   Does it improve multi-core speedup (i.e., the benefit of moving from ISPC without-tasks to ISPC with tasks)? Please explain why.
+
+```
+change input to [0.5,1.5] has smallest and even iteration number. even iteraton is friendly for SIMD.
+[sqrt serial]:          [272.378] ms
+[sqrt ispc]:            [20.834] ms
+[sqrt task ispc]:       [4.177] ms
+                                (13.07x speedup from ISPC)
+                                (65.22x speedup from task ISPC)
+```
 3.  Construct a specific input for `sqrt` that __minimizes speedup for ISPC (without-tasks) over the sequential version of the code__. Describe this input, describe why you chose it, and report the resulting relative performance of the ISPC implementations. What is the reason for the loss in efficiency? 
     __(keep in mind we are using the `--target=avx2` option for ISPC, which generates 8-wide SIMD instructions)__. 
+i%8==0,input=2.99;i%8!=0,input=1, __minimizes speedup for simd.
+```
+[sqrt serial]:          [114.112] ms
+[sqrt ispc]:            [132.408] ms
+[sqrt task ispc]:       [11.382] ms
+                                (0.86x speedup from ISPC)
+                                (10.03x speedup from task ISPC)
+```
 4.  _Extra Credit: (up to 2 points)_ Write your own version of the `sqrt` 
  function manually using AVX2 intrinsics. To get credit your 
     implementation should be nearly as fast (or faster) than the binary 
@@ -421,6 +448,12 @@ elements used. `saxpy` is a *trivially parallelizable computation* and features 
   ISPC (without tasks) and ISPC (with tasks) implementations of saxpy. What 
   speedup from using ISPC with tasks do you observe? Explain the performance of this program.
   Do you think it can be substantially improved? (For example, could you rewrite the code to achieve near linear speedup? Yes or No? Please justify your answer.)
+
+```
+[saxpy ispc]:           [5.908] ms      [50.445] GB/s   [6.771] GFLOPS
+[saxpy task ispc]:      [5.541] ms      [53.790] GB/s   [7.220] GFLOPS
+                                (1.07x speedup from use of tasks)
+```
 2. __Extra Credit:__ (1 point) Note that the total memory bandwidth consumed computation in `main.cpp` is `TOTAL_BYTES = 4 * N * sizeof(float);`.  Even though `saxpy` loads one element from X, one element from Y, and writes one element to `result` the multiplier by 4 is correct.  Why is this the case? (Hint, think about how CPU caches work.)
 3. __Extra Credit:__ (points handled on a case-by-case basis) Improve the performance of `saxpy`.
   We're looking for a significant speedup here, not just a few percentage 
