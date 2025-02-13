@@ -372,6 +372,17 @@ accuracy of the initial guess.
 
 Note: This problem is a review to double-check your understanding, as it covers similar concepts as programs 2 and 3.
 
+ans:
+[mandelbrot serial]:            [137.465] ms
+Wrote image file mandelbrot-serial.ppm
+[mandelbrot ispc]:              [16.941] ms
+Wrote image file mandelbrot-ispc.ppm
+[mandelbrot multicore ispc]:    [1.664] ms
+Wrote image file mandelbrot-task-ispc.ppm
+                                (8.11x speedup from ISPC)(avx2)
+                                (82.61x speedup from task ISPC)
+note:amd avx512 not support in ispc.
+
 ![Convergence of sqrt](handout-images/sqrt_graph.jpg "Convergence of sqrt on the range 0-3 with starting guess 1.0. Note that iterations until convergence is immediate for an input value of 1 and increases as the input value goes toward 0 or 3 (highest value is for input of 3).")
 
 **What you need to do:**
