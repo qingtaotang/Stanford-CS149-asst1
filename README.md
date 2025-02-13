@@ -166,6 +166,7 @@ utilization. You can do this by changing the `#define VECTOR_WIDTH` value in `CS
 Does the vector utilization increase, decrease or stay the same as `VECTOR_WIDTH` changes? Why?
 
 ans: VECTOR_WIDTH越小，vector utilization越高
+```
 Results matched with answer!
 ****************** Printing Vector Unit Statistics *******************
 Vector Width:              2
@@ -178,6 +179,7 @@ Passed!!!
 
 ARRAY SUM (bonus)
 Passed!!!
+```
 
 3.  _Extra credit: (1 point)_ Implement a vectorized version of `arraySumSerial` in `arraySumVector`. Your implementation may assume that `VECTOR_WIDTH` is a factor of the input array size `N`. Whereas the serial implementation runs in `O(N)` time, your implementation should aim for runtime of `(N / VECTOR_WIDTH + VECTOR_WIDTH)` or even `(N / VECTOR_WIDTH + log2(VECTOR_WIDTH))`  You may find the `hadd` and `interleave` operations useful.
 
@@ -359,6 +361,18 @@ cores?
 _Answer_: Great question! And there are a lot of possible answers. Come to
 office hours.
 
+```
+ans:
+[mandelbrot serial]:            [137.465] ms
+Wrote image file mandelbrot-serial.ppm
+[mandelbrot ispc]:              [16.941] ms
+Wrote image file mandelbrot-ispc.ppm
+[mandelbrot multicore ispc]:    [1.664] ms
+Wrote image file mandelbrot-task-ispc.ppm
+                                (8.11x speedup from ISPC)(avx2)
+                                (82.61x speedup from task ISPC)
+note:amd avx512 not support in ispc.
+```
 ## Program 4: Iterative `sqrt` (15 points) ##
 
 Program 4 is an ISPC program that computes the square root of 20 million
@@ -372,16 +386,6 @@ accuracy of the initial guess.
 
 Note: This problem is a review to double-check your understanding, as it covers similar concepts as programs 2 and 3.
 
-ans:
-[mandelbrot serial]:            [137.465] ms
-Wrote image file mandelbrot-serial.ppm
-[mandelbrot ispc]:              [16.941] ms
-Wrote image file mandelbrot-ispc.ppm
-[mandelbrot multicore ispc]:    [1.664] ms
-Wrote image file mandelbrot-task-ispc.ppm
-                                (8.11x speedup from ISPC)(avx2)
-                                (82.61x speedup from task ISPC)
-note:amd avx512 not support in ispc.
 
 ![Convergence of sqrt](handout-images/sqrt_graph.jpg "Convergence of sqrt on the range 0-3 with starting guess 1.0. Note that iterations until convergence is immediate for an input value of 1 and increases as the input value goes toward 0 or 3 (highest value is for input of 3).")
 
