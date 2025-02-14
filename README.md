@@ -450,14 +450,19 @@ elements used. `saxpy` is a *trivially parallelizable computation* and features 
   Do you think it can be substantially improved? (For example, could you rewrite the code to achieve near linear speedup? Yes or No? Please justify your answer.)
 
 ```
-[saxpy ispc]:           [5.908] ms      [50.445] GB/s   [6.771] GFLOPS
-[saxpy task ispc]:      [5.541] ms      [53.790] GB/s   [7.220] GFLOPS
+[saxpy serial]:         [6.601] ms      [45.145] GB/s   [6.059] GFLOPS
+[saxpy ispc]:           [5.731] ms      [51.999] GB/s   [6.979] GFLOPS
+[saxpy task ispc]:      [5.444] ms      [54.742] GB/s   [7.347] GFLOPS
                                 (1.07x speedup from use of tasks)
 ```
+memory bandwidth is the bottleneck, therefore tasks have no improvement. 
+
 2. __Extra Credit:__ (1 point) Note that the total memory bandwidth consumed computation in `main.cpp` is `TOTAL_BYTES = 4 * N * sizeof(float);`.  Even though `saxpy` loads one element from X, one element from Y, and writes one element to `result` the multiplier by 4 is correct.  Why is this the case? (Hint, think about how CPU caches work.)
+
 3. __Extra Credit:__ (points handled on a case-by-case basis) Improve the performance of `saxpy`.
   We're looking for a significant speedup here, not just a few percentage 
   points. If successful, describe how you did it and what a best-possible implementation on these systems might achieve. Also, if successful, come tell the staff, we'll be interested. ;-)
+ans: memory bandwidth is the bottleneck, hard to imporve.
 
 Notes: Some students have gotten hung up on this question (thinking too hard) in the past. We expect a simple answer, but the results from running this problem might trigger more questions in your head.  Feel encouraged to come talk to the staff.
 

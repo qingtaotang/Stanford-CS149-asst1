@@ -65,15 +65,14 @@ int main() {
         minSerial = std::min(minSerial, endTime - startTime);
     }
 
-// printf("[saxpy serial]:\t\t[%.3f] ms\t[%.3f] GB/s\t[%.3f] GFLOPS\n",
-    //       minSerial * 1000,
-    //       toBW(TOTAL_BYTES, minSerial),
-    //       toGFLOPS(TOTAL_FLOPS, minSerial));
+    printf("[saxpy serial]:\t\t[%.3f] ms\t[%.3f] GB/s\t[%.3f] GFLOPS\n",
+            minSerial * 1000,
+            toBW(TOTAL_BYTES, minSerial),
+            toGFLOPS(TOTAL_FLOPS, minSerial));
 
-    //
-    // Run the ISPC (single core) implementation
-    //
-    double minISPC = 1e30;
+    //Run the ISPC (single core) implementation
+
+        double minISPC = 1e30;
     for (int i = 0; i < 3; ++i) {
         double startTime = CycleTimer::currentSeconds();
         saxpy_ispc(N, scale, arrayX, arrayY, resultISPC);
@@ -84,9 +83,9 @@ int main() {
     verifyResult(N, resultISPC, resultSerial);
 
     printf("[saxpy ispc]:\t\t[%.3f] ms\t[%.3f] GB/s\t[%.3f] GFLOPS\n",
-           minISPC * 1000,
-           toBW(TOTAL_BYTES, minISPC),
-           toGFLOPS(TOTAL_FLOPS, minISPC));
+            minISPC * 1000,
+            toBW(TOTAL_BYTES, minISPC),
+            toGFLOPS(TOTAL_FLOPS, minISPC));
 
     //
     // Run the ISPC (multi-core) implementation
@@ -102,9 +101,9 @@ int main() {
     verifyResult(N, resultTasks, resultSerial);
 
     printf("[saxpy task ispc]:\t[%.3f] ms\t[%.3f] GB/s\t[%.3f] GFLOPS\n",
-           minTaskISPC * 1000,
-           toBW(TOTAL_BYTES, minTaskISPC),
-           toGFLOPS(TOTAL_FLOPS, minTaskISPC));
+            minTaskISPC * 1000,
+            toBW(TOTAL_BYTES, minTaskISPC),
+            toGFLOPS(TOTAL_FLOPS, minTaskISPC));
 
     printf("\t\t\t\t(%.2fx speedup from use of tasks)\n", minISPC/minTaskISPC);
     //printf("\t\t\t\t(%.2fx speedup from ISPC)\n", minSerial/minISPC);
