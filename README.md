@@ -2,38 +2,6 @@
 
 ## Program 1: Parallel Fractal Generation Using Threads (20 points) ##
 
-Build and run the code in the `prog1_mandelbrot_threads/` directory of
-the code base. (Type `make` to build, and `./mandelbrot` to run it.)
-This program produces the image file `mandelbrot-serial.ppm`, which is a visualization of a famous set of
-complex numbers called the Mandelbrot set. Most platforms have a .ppm
-view. To view the resulting images remotely, first make sure that you have _X server_. No downloads are needed
-for Linux systems. However, for Mac you can use [Xquartz](https://www.xquartz.org/) and 
-for Windows you can use [VcXsrv](https://sourceforge.net/projects/vcxsrv/).
-After you have SSH X-Forwarding support, make sure you `ssh -Y` onto a myth machine and
-you can then view the images using the `display` command. As you can see in the images below, the
-result is a familiar and beautiful fractal.  Each pixel in the image
-corresponds to a value in the complex plane, and the brightness of
-each pixel is proportional to the computational cost of determining
-whether the value is contained in the Mandelbrot set. To get image 2,
-use the command option `--view 2`.  (See function `mandelbrotSerial()`
-defined in `mandelbrotSerial.cpp`). You can learn more about the
-definition of the Mandelbrot set at
-<http://en.wikipedia.org/wiki/Mandelbrot_set>.
-
-
-![Mandelbrot Set](handout-images/mandelbrot_viz.jpg "A visualization of two views of the Mandelbrot set. The cost of computing each pixel is proportional to its brightness. When running programs 1 and 3, you can use the command line option `--view 2` to set output to be view 2.")
-
-Your job is to parallelize the computation of the images using 
-[std::thread](https://en.cppreference.com/w/cpp/thread/thread). Starter
-code that spawns one additional thread is provided in the function
-`mandelbrotThread()` located in `mandelbrotThread.cpp`. In this function, the
-main application thread creates another additional thread using the constructor
-`std::thread(function, args...)` It waits for this thread to complete by calling
-`join` on the thread object.
-Currently the launched thread does not do any computation and returns immediately.
-You should add code to `workerThreadStart` function to accomplish this task.
-You will not need to make use of any other std::thread API calls in this assignment.
-
 **What you need to do:**
 
 1.  Modify the starter code to parallelize the Mandelbrot generation using 
@@ -80,31 +48,6 @@ ans: threads=24,几乎无加速
 
 ## Program 2: Vectorizing Code Using SIMD Intrinsics (20 points) ##
 
-Take a look at the function `clampedExpSerial` in `prog2_vecintrin/main.cpp` of the
-Assignment 1 code base.  The `clampedExp()` function raises `values[i]` to the power given by `exponents[i]` for all elements of the input array and clamps the resulting values at 9.999999.  In program 2, your job is to vectorize this piece of code so it can be run on a machine with SIMD vector instructions.
-
-However, rather than craft an implementation using SSE or AVX2 vector intrinsics that map to real SIMD vector instructions on modern CPUs, to make things a little easier, we're asking you to implement your version using CS149's "fake vector intrinsics" defined in `CS149intrin.h`.   The `CS149intrin.h` library provides you with a set of vector instructions that operate
-on vector values and/or vector masks. (These functions don't translate to real CPU vector instructions, instead we simulate these operations for you in our library, and provide feedback that makes for easier debugging.)  As an example of using the CS149 intrinsics, a vectorized version of the `abs()` function is given in `main.cpp`. This example contains some basic vector loads and stores and manipulates mask registers.  Note that the `abs()` example is only a simple example, and in fact the code does not correctly handle all inputs! (We will let you figure out why!) You may wish to read through all the comments and function definitions in `CS149intrin.h` to know what operations are available to you. 
-
-Here are few hints to help you in your implementation:
-
--  Every vector instruction is subject to an optional mask parameter.  The mask parameter defines which lanes whose output is "masked" for this operation. A 0 in the mask indicates a lane is masked, and so its value will not be overwritten by the results of the vector operation. If no mask is specified in the operation, no lanes are masked. (Note this equivalent to providing a mask of all ones.) 
-   *Hint:* Your solution will need to use multiple mask registers and various mask operations provided in the library.
--  *Hint:* Use `_cs149_cntbits` function helpful in this problem.
--  Consider what might happen if the total number of loop iterations is not a multiple of SIMD vector width. We suggest you test 
-your code with `./myexp -s 3`. *Hint:* You might find `_cs149_init_ones` helpful.
--  *Hint:* Use `./myexp -l` to print a log of executed vector instruction at the end. 
-Use function `addUserLog()` to add customized debug information in log. Feel free to add additional 
-`CS149Logger.printLog()` to help you debug.
-
-The output of the program will tell you if your implementation generates correct output. If there
-are incorrect results, the program will print the first one it finds and print out a table of
-function inputs and outputs. Your function's output is after "output = ", which should match with 
-the results after "gold = ". The program also prints out a list of statistics describing utilization of the CS149 fake vector
-units. You should consider the performance of your implementation to be the value "Total Vector 
-Instructions". (You can assume every CS149 fake vector instruction takes one cycle on the CS149 fake SIMD CPU.) "Vector Utilization" 
-shows the percentage of vector lanes that are enabled. 
-
 **What you need to do:**
 
 1.  Implement a vectorized version of `clampedExpSerial` in `clampedExpVector` . Your implementation 
@@ -124,12 +67,15 @@ Utilized Vector Lanes:     695
 Total Vector Lanes:        760
 ************************ Result Verification *************************
 Passed!!!
-
-ARRAY SUM (bonus)
-Passed!!!
 ```
 
 3.  _Extra credit: (1 point)_ Implement a vectorized version of `arraySumSerial` in `arraySumVector`. Your implementation may assume that `VECTOR_WIDTH` is a factor of the input array size `N`. Whereas the serial implementation runs in `O(N)` time, your implementation should aim for runtime of `(N / VECTOR_WIDTH + VECTOR_WIDTH)` or even `(N / VECTOR_WIDTH + log2(VECTOR_WIDTH))`  You may find the `hadd` and `interleave` operations useful.
+
+ans: done.
+```
+ARRAY SUM (bonus)
+Passed!!!
+```
 
 ## Program 3: Parallel Fractal Generation Using ISPC (20 points) ##
 
@@ -323,20 +269,6 @@ note:amd avx512 not support in ispc.
 ```
 ## Program 4: Iterative `sqrt` (15 points) ##
 
-Program 4 is an ISPC program that computes the square root of 20 million
-random numbers between 0 and 3. It uses a fast, iterative implementation of
-square root that uses Newton's method to solve the equation ${\frac{1}{x^2}} - S = 0$.
-The value 1.0 is used as the initial guess in this implementation. The graph below shows the 
-number of iterations required for `sqrt` to converge to an accurate solution 
-for values in the (0-3) range. (The implementation does not converge for 
-inputs outside this range). Notice that the speed of convergence depends on the 
-accuracy of the initial guess.
-
-Note: This problem is a review to double-check your understanding, as it covers similar concepts as programs 2 and 3.
-
-
-![Convergence of sqrt](handout-images/sqrt_graph.jpg "Convergence of sqrt on the range 0-3 with starting guess 1.0. Note that iterations until convergence is immediate for an input value of 1 and increases as the input value goes toward 0 or 3 (highest value is for input of 3).")
-
 **What you need to do:**
 
 1.  Build and run `sqrt`. Report the ISPC implementation speedup for 
@@ -410,9 +342,9 @@ memory bandwidth is the bottleneck, therefore tasks have no improvement.
 3. __Extra Credit:__ (points handled on a case-by-case basis) Improve the performance of `saxpy`.
   We're looking for a significant speedup here, not just a few percentage 
   points. If successful, describe how you did it and what a best-possible implementation on these systems might achieve. Also, if successful, come tell the staff, we'll be interested. ;-)
+
 ans: memory bandwidth is the bottleneck, hard to imporve.
 
-Notes: Some students have gotten hung up on this question (thinking too hard) in the past. We expect a simple answer, but the results from running this problem might trigger more questions in your head.  Feel encouraged to come talk to the staff.
 
 ## Program 6: Making `K-Means` Faster (15 points) ##
 
@@ -429,20 +361,44 @@ In the starter code you have been given a correct implementation of the K-means 
 3.  Utilize the timing function in `common/CycleTimer.h` to determine where in the code there are performance bottlenecks. You will need to call `CycleTimer::currentSeconds()`, which returns the current time (in seconds) as a floating point number. Where is most of the time being spent in the code?
 4.  Based on your findings from the previous step, improve the implementation. We are looking for a speedup of about 2.1x or more (i.e $\frac{oldRuntime}{newRuntime} >= 2.1$). Please explain how you arrived at your solution, as well as what your final solution is and the associated speedup. The writeup of this process should describe a sequence of steps. We expect something of the form "I measured ... which let me to believe X. So to improve things I tried ... resulting in a speedup/slowdown of ...".
   
-Constraints:
-- You may only modify code in `kmeansThread.cpp`. You are not allowed to modify the `stoppingConditionMet` function and you cannot change the interface to `kMeansThread`, but anything is fair game (e.g. you can add new members to the `WorkerArgs` struct, rewrite functions, allocate new arrays, etc.). However...
-- **Make sure you do not change the functionality of the implementation! If the algorithm doesn't converge or the result from running `python3 plot.py` does not look like what's produced by the starter code, something is wrong!** For example, you cannot simply remove the main "while" loop or change the semantics of the `dist` function, since this would yield incorrect results.
-- __Important:__ you may only parallelize __one__ of the following functions: `dist`, `computeAssignments`, `computeCentroids`, `computeCost`. For an example of how to write parallel code using `std::thread`, see `prog1_mandelbrot_threads/mandelbrotThread.cpp`.
-  
-Tips / Notes: 
-- This problem should not require a significant amount of coding. Our solution modified/added around 20-25 lines of code.
-- Once you've used timers to isolate hotspots, to improve the code make sure you understand the relative sizes of K, M, and N.
-- Try to prioritize code improvements with the potential for high returns and think about the different axes of parallelism available in the problem and how you may take advantage of them.
-- **The objective of this program is to give you more practice with learning how to profile and debug performance oriented programs. Even if you don't hit the performance target, if you demonstrate good/thoughtful debugging skills in the writeup you'll still get most of the points.**
 
-## What About ARM-Based Macs? ##
+ans:
+1. 热点分析,Assignment这一步花费了绝大多数时间。
+```
+Iteration 2 timings:
+Assignment cost: 0.1554 seconds
+Centroid computation: 0.0235671 seconds
+Cost computation: 0.0424072 seconds
+[Total Time]: 5341.336 ms
+```
+2. Assignment在M(样本量)维度切分，使用多线程后。
+```
+Iteration 2 timings:
+Assignment cost: 0.0491241 seconds
+Centroid computation: 0.0251475 seconds
+Cost computation: 0.0417044 seconds
+[Total Time]: 2701.826 ms
+```
+每个线程的耗时如下，注意，和mandelbrot多线程中的问题不同，计算距离时，每个线程理论计算量一致，每个线程的耗时基本均匀。
+```
+time of thread2:0.0176496
+time of thread1:0.0179689
+time of thread3:0.0172081
+time of thread4:0.0190668
+time of thread5:0.0182603
+time of thread6:0.0188453
+time of thread7:0.0258558
+time of thread10:0.0187195
+time of thread8:0.0298801
+time of thread9:0.027016
+time of thread13:0.0218985
+time of thread11:0.024976
+time of thread15:0.0218126
+time of thread0:0.0220489
+time of thread12:0.0248199
+time of thread14:0.0229558
+```
 
-For those with access to a new Apple ARM-based laptop, try changing the ISPC compilation target to `neon-i32x8` and the compilation arch to `aarch64` in Programs 3, 4, and 5. The other programs only use GCC and should produce the correct target. Produce a report of performance of the various programs on a new Apple ARM-based laptop. The staff is curious about what you will find.  What speedups are you observing from SIMD execution? Those without access to a modern Macbook could try to use ARM-based servers that are available on a cloud provider like AWS, although it has not been tested by the staff. Make sure that you reset the ISPC compilation target to `avx2-i32x8` and the compilation arch to `x86-64` before you submit the assignment because we will be testing your solutions on the myth machines!
 
 ## For the Curious (highly recommended) ##
 
