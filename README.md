@@ -33,7 +33,7 @@ Thread 1: [339.322] ms
   among threads is necessary.). In your writeup, describe your approach to parallelization
   and report the final 8-thread speedup obtained. 
 
-ans: 注意每个数据点计算时，有这个终止条件，导致每个位置的迭代次数可能不同。参考["每个线程计算的粒度进行细分, 从上到下按照一定间隔计算多块区域，每块区域不应该太小而导致无法利用局部性, 也不应该太大导致不同线程计算量差异过大"](https://zhuanlan.zhihu.com/p/7554656902) 优化后,3线程的结果
+ans: 注意每个数据点计算时，有这个终止条件，导致每个位置的迭代次数可能不同。[参考](https://zhuanlan.zhihu.com/p/7554656902)"每个线程计算的粒度进行细分, 从上到下按照一定间隔计算多块区域，每块区域不应该太小而导致无法利用局部性, 也不应该太大导致不同线程计算量差异过大"优化后,3线程的结果
 ```
 Thread 2: [145.627] ms
 Thread 1: [147.303] ms
