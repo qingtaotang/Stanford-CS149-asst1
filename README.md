@@ -397,7 +397,7 @@ time of thread0:0.0220489
 time of thread12:0.0248199
 time of thread14:0.0229558
 ```
-
+另外，将DIST中的下标都换为0，充分利用cache，耗时减半。把数学运算都去掉，另acc=x[i]，耗时变化不大。说明disct部分已经是memory bound了。
 
 ## For the Curious (highly recommended) ##
 
