@@ -33,14 +33,13 @@ Thread 1: [339.322] ms
   among threads is necessary.). In your writeup, describe your approach to parallelization
   and report the final 8-thread speedup obtained. 
 
-ans: there is a maximum iteration,middel thread has more iterations.注意每个数据点计算时，有这个终止条件，导致每个位置的迭代次数可能不同，if (z_re * z_re + z_im * z_im > 4.f)
-            break;
-"每个线程计算的粒度进行细分, 从上到下按照一定间隔计算多块区域，每块区域不应该太小而导致无法利用局部性, 也不应该太大导致不同线程计算量差异过大"(cite:https://zhuanlan.zhihu.com/p/7554656902)
-优化后,3线程
+ans: 注意每个数据点计算时，有这个终止条件，导致每个位置的迭代次数可能不同。参考["每个线程计算的粒度进行细分, 从上到下按照一定间隔计算多块区域，每块区域不应该太小而导致无法利用局部性, 也不应该太大导致不同线程计算量差异过大"](https://zhuanlan.zhihu.com/p/7554656902) 优化后,3线程的结果
+```
 Thread 2: [145.627] ms
 Thread 1: [147.303] ms
 Thread 0: [161.898] ms
 6cores 12 threads,9.9倍加速
+```
 
 5. Now run your improved code with 16 threads. Is performance noticably greater than when running with eight threads? Why or why not? 
 
